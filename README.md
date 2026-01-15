@@ -12,11 +12,11 @@
 
 利用 STM32G4 系列的高性能特性，对时钟树进行了深度的数学建模与配置：
 
-- **HSE 入口**：配置为外部 **24\text{MHz}** 晶振。
+- **HSE 入口**：配置为外部 **24MHz** 晶振。
 - **PLL 计算链条**：
-  - **分频 (PLLM)**：**24\text{MHz} \div 6 = 4\text{MHz}**（获取最佳 PLL 参考频率）。
-  - **倍频 (PLLN)**：**4\text{MHz} \times 85 = 340\text{MHz}**（符合 VCO 物理压控范围 **128\text{MHz} \sim 544\text{MHz}**）。
-  - **系统输出 (PLLR)**：**340\text{MHz} \div 2 = 170\text{MHz}** (HCLK 主频)。
+  - **分频 (PLLM)**：**24MHz\6 = 4MHz**（获取最佳 PLL 参考频率）。
+  - **倍频 (PLLN)**：**4MHz\85 = 340MHz**（符合 VCO 物理压控范围 **128MHz~544MHz**）。
+  - **系统输出 (PLLR)**：**340MHz\2 = 170MHz** (HCLK 主频)。
 
 ### 2.2 硬件锁存控制逻辑 (Latch Logic)
 
@@ -47,3 +47,4 @@
 在开发过程中，重点掌握了以下 **HAL 库** 驱动函数：
 
 - `HAL_GPIO_WritePin(GPIOx, Pin, State)`：引脚电平精确控制。
+
