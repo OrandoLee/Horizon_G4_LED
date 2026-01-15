@@ -46,6 +46,4 @@
 
 在开发过程中，重点掌握了以下 **HAL 库** 驱动函数：
 
-- `HAL_UART_Receive(&huart1, &data, 1, 10)`：串口阻塞式接收指令。
 - `HAL_GPIO_WritePin(GPIOx, Pin, State)`：引脚电平精确控制。
-- `HAL_Delay(ms)`：系统节拍延时（基于 **170\text{MHz}** 自动校准）。
