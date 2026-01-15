@@ -1,0 +1,24 @@
+--cpu=Cortex-M4.fp.sp
+"horizon_g4_led\startup_stm32g431xx.o"
+"horizon_g4_led\main.o"
+"horizon_g4_led\gpio.o"
+"horizon_g4_led\stm32g4xx_it.o"
+"horizon_g4_led\stm32g4xx_hal_msp.o"
+"horizon_g4_led\stm32g4xx_hal_pwr_ex.o"
+"horizon_g4_led\stm32g4xx_hal.o"
+"horizon_g4_led\stm32g4xx_hal_rcc.o"
+"horizon_g4_led\stm32g4xx_hal_rcc_ex.o"
+"horizon_g4_led\stm32g4xx_hal_flash.o"
+"horizon_g4_led\stm32g4xx_hal_flash_ex.o"
+"horizon_g4_led\stm32g4xx_hal_flash_ramfunc.o"
+"horizon_g4_led\stm32g4xx_hal_gpio.o"
+"horizon_g4_led\stm32g4xx_hal_exti.o"
+"horizon_g4_led\stm32g4xx_hal_dma.o"
+"horizon_g4_led\stm32g4xx_hal_dma_ex.o"
+"horizon_g4_led\stm32g4xx_hal_pwr.o"
+"horizon_g4_led\stm32g4xx_hal_cortex.o"
+"horizon_g4_led\system_stm32g4xx.o"
+--strict --scatter "Horizon_G4_LED\Horizon_G4_LED.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "Horizon_G4_LED.map" -o Horizon_G4_LED\Horizon_G4_LED.axf
