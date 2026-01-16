@@ -1,50 +1,65 @@
 # Horizon_G4_LED
 
-## 1. 项目简介
+- ## 1. 项目简介
 
-**Horizon_G4_LED** 是 **Horizon-G4** 大型嵌入式开发计划的第一个子项目（P1）。
+  本项目的目标是：
 
-本项目旨在 STM32G431 开发平台上，通过对底层寄存器逻辑的抽象与硬件协议的对齐，实现**指令解析控灯**与**实时遥测数据可视化**的完整闭环。
+  - 熟悉 STM32CubeMX 的时钟与 GPIO 配置流程。
+  - 掌握 STM32 HAL 库中 GPIO 控制函数的使用。
+  - 实现 LED 的周期性闪烁。
 
-## 2. 核心技术细节
+  ## 2. 硬件资源
 
-### 2.1 高频系统时钟配置 (170MHz Clock Tree)
+  - **开发板**: STM32G431RBT6 (ARM Cortex-M4 @ 170MHz)
+  - **LED 引脚**:
+    - `LD2` -> `PC8` (部分通用开发板)
 
-利用 STM32G4 系列的高性能特性，对时钟树进行了深度的数学建模与配置：
+  ## 3. 开发环境
 
-- **HSE 入口**：配置为外部 **24MHz** 晶振。
-- **PLL 计算链条**：
-  - **分频 (PLLM)**：**24MHz\6 = 4MHz**（获取最佳 PLL 参考频率）。
-  - **倍频 (PLLN)**：**4MHz\85 = 340MHz**（符合 VCO 物理压控范围 **128MHz~544MHz**）。
-  - **系统输出 (PLLR)**：**340MHz\2 = 170MHz** (HCLK 主频)。
+  - **配置工具**: STM32CubeMX
+  - **IDE**: Keil MDK v5 / STM32CubeIDE
+  - **烧录工具**: CMSIS-DAP Debugger
 
-### 2.2 硬件锁存控制逻辑 (Latch Logic)
+  ## 4. 核心配置步骤
 
-针对板载 LED 采用 **74HC573 锁存器** 隔离设计的特点，实现了精准的时序控制：
+  ### STM32CubeMX 配置
 
-- **控制链路**：通过 **PD2 (LE)** 引脚作为闸门，控制 **PC8~PC15** 数据流向 LED。
-- **电平协议**：LED 为共阳极连接，引脚输出 **Low** 为点亮，**High** 为熄灭。
-- **时序规范**：
-  1. 拉高 PD2（开门）。
-  2. 更新 PC8~PC15 状态。
-  3. 拉低 PD2（锁存并关门）。
+  1. **RCC**: 开启 HSE (外部高速时钟)，并在 Clock Configuration 中配置主频至 **170MHz**。
+  2. **GPIO**:
+     - 选择对应引脚（如 `PC8`）设为 `GPIO_Output`。
+     - 设置输出电平为 `High` (初始熄灭)，模式为 `Push-Pull`。
+  3. **Project Manager**: 选择MDK-ARM并生成代码。
 
-## 3. 功能特性
+  ### 核心代码实现
 
-- **双向指令解析**：通过 **USART1 (115200bps)** 接收字符指令，实现字符 `'1'` 开灯与 `'0'` 关灯的逻辑解析。
-- **实时遥测输出 (Telemetry)**：利用 `printf` 重定向技术，通过 **FireWater 协议** 向上位机推送模拟锯齿波形。
-- **数据可视化**：配合 **VOFA+** 上位机，通过手动绑定 **I0 通道**，实现 **10\text{ms}** 采样周期的波形实时监测。
+  在 `main.c` 的 `while(1)` 循环中添加以下代码：
 
-## 4. 软件环境
+  C
 
-- **配置工具**：STM32CubeMX (Version 6.x)
-- **IDE**：Keil uVision5 (MDK-ARM)
-- **调试器**：DAP-Link / ST-Link (SWD 模式)
-- **上位机**：VOFA+ (v1.3.10)
+  ```
+  /* USER CODE BEGIN WHILE */
+    while (1)
+    {
+  	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);   // 1. 打开锁存器闸门
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); // 2. 给低电平点亮 LED8
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET); // 3. 关闭闸门锁死状态
+      /* USER CODE END WHILE */
+  
+      /* USER CODE BEGIN 3 */
+    }
+  ```
 
-## 5. 关键 API 记录
+  ## 5. 编译与烧录
+
+  1. 在 IDE 中点击 **Build** (F7) 编译项目，确保无 Error。
+  2. 通过 CMSIS-DAP 连接开发板与电脑。
+  3. 点击 **Download** (F8) 将程序烧录至芯片。
+  4. 观察开发板上的 LED,其开始以 1Hz 的频率闪烁。
+
+  ## 6. 关键 API 记录
 
 在开发过程中，重点掌握了以下 **HAL 库** 驱动函数：
 
 - `HAL_GPIO_WritePin(GPIOx, Pin, State)`：引脚电平精确控制。
+
 
